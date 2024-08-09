@@ -40,7 +40,7 @@ Les contributions sont les bienvenues ! Si vous souhaitez améliorer un article 
 2. Créez une nouvelle branche :
    ```bash
    git checkout -b <nom-de-la-branche>
-3. Faite vos modifcations et commitez-les :
+3. Faite vos modifications et commitez-les :
    ```bash
    git commit -m "Description des modifications"
 4. Faite un push sur votre fork :
@@ -52,7 +52,7 @@ Les contributions sont les bienvenues ! Si vous souhaitez améliorer un article 
 
 Contact : [lefebvremathis@proton.me](mailto:lefebvremathis@proton.me)
 
-## 📄 License
+## 📄 Licence
 
 Ce repository est sous licence [MIT](https://opensource.org/license/mit).
 
