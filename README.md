@@ -1,4 +1,4 @@
-# 🇬🇧 Language
+## 🇬🇧 Language
 Read this in [English](#-english) 
 
 # 📚 LaTeX Articles Collection
@@ -7,7 +7,7 @@ Ce repository regroupe mes projets écrit en LaTex.
 
 ## 🚀 Objectif
 
-l'objectif est de partager mes travaux et de les rendre ouvert à la modification et à la correction, mes résultats pouvant être inexactes ou faux.
+L'objectif est de partager mes travaux et de les rendre ouvert à la modification et à la correction, mes résultats pouvant être inexactes ou faux.
 
 ## 🛠️ Pré-requis
 
@@ -32,7 +32,7 @@ Pour compiler un article :
 
 Cela générera un fichier PDF dans le même répertoire.
 
-# 📝 Contribuer, Corriger
+## 📝 Contribuer, Corriger, Traduire
 
 Les contributions sont les bienvenues ! Si vous souhaitez améliorer un article existant, apporter un précision, corriger une erreur, ou traduire un article, vous pouvez suivre ces étapes :
 
@@ -48,11 +48,11 @@ Les contributions sont les bienvenues ! Si vous souhaitez améliorer un article 
    git push origin <nom-de-la-branche>
 5. Faites un pull request sur ce repository.
 
-# 📧 Contact
+## 📧 Contact
 
 Contact : [lefebvremathis@proton.me](mailto:lefebvremathis@proton.me)
 
-# 📄 License
+## 📄 License
 
 Ce repository est sous licence [MIT](https://opensource.org/license/mit).
 
