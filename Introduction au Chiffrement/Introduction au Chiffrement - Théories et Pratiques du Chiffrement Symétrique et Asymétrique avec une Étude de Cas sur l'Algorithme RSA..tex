@@ -1,0 +1,869 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+\usepackage{ulem}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amssymb, amsmath, changepage, darkmode,tabularx,siunitx}
+%\enabledarkmode
+\usepackage{makecell}
+\usepackage[top=1in,bottom=1in,right=1in,left=1in]{geometry}
+
+\usepackage{mdframed}
+
+\usepackage{chemfig}
+\usepackage{array}
+\usepackage{textgreek}
+\usepackage{multirow}
+\usepackage{tocloft}
+
+\usepackage{mathpazo}
+\usepackage{etoolbox}
+\usepackage{titling}
+\usepackage[french]{babel}
+\usepackage{datetime}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+\usepackage[backend=bibtex]{biblatex}
+\addbibresource{bibtex}
+
+\definecolor{indigo}{RGB}{75, 0, 130}
+
+\hypersetup{
+	pdftitle={Introduction au Chiffrement : Théories et Pratiques du Chiffrement
+		Symétrique et Asymétrique avec une Étude de Cas sur l'Algorithme RSA.},
+	pdfauthor={Mathis Lefebvre},
+	pdfsubject={Cryptoraphie},
+	pdfkeywords={Cryptographie, Cybersécurité, RSA},
+	pdfcreator={LaTeX with hyperref},
+	pdfproducer={TeX},
+	pdfstartview={FitV}, % Ajuste la vue de démarrage du document PDF
+	colorlinks=true, % Active les liens colorés
+	linkcolor=indigo, % Couleur des liens internes
+	citecolor=blue, % Couleur des références bibliographiques
+	urlcolor=blue % Couleur des URL
+}
+
+\usepackage[some]{background}
+\usepackage{enumitem}
+\setlist[itemize]{label=\textbullet}
+\setlength{\parindent}{0pt}
+
+\AddToHook{cmd/section/before}{\clearpage}
+
+\newenvironment{resume}{%
+	\renewcommand{\abstractname}{Résumé}% 
+	\begin{abstract}
+	}{%
+	\end{abstract}
+}
+
+% Configurer les couleurs de la table des matières
+\renewcommand{\cftsecfont}{\normalfont} % Pas de couleur pour les sections
+\renewcommand{\cftsecpagefont}{\normalfont} % Pas de couleur pour les numéros de page des sections
+
+\renewcommand{\contentsname}{Table des matières}
+
+\definecolor{titlepagecolor}{cmyk}{1,.60,0,.40}
+
+\DeclareFixedFont{\bigsf}{T1}{phv}{b}{n}{1.5cm}
+
+\backgroundsetup{
+	scale=1,
+	angle=0,
+	opacity=1,
+	contents={\begin{tikzpicture}[remember picture,overlay]
+			\path [fill=titlepagecolor] (-0.5\paperwidth,5) rectangle (0.5\paperwidth,25);  
+	\end{tikzpicture}}
+}
+\makeatletter                       
+\def\printauthor{%                  
+	{\large \@author}}              
+\makeatother
+\author{
+	Mathis Lefebvre \\
+	\texttt{lefebvremathis@proton.me}\\ \vspace{60pt} 
+	\today
+	}
+
+
+\begin{document}
+	
+	% Title Page
+	\begin{titlepage}
+		\BgThispage
+		\newgeometry{left=1cm,right=4cm}
+		\vspace*{2cm}
+		\noindent
+		\textcolor{white}{\huge Introduction au Chiffrement : Théories et Pratiques du Chiffrement
+			Symétrique et Asymétrique avec une Étude de Cas sur l'Algorithme RSA.}
+		\vspace*{2.5cm}\par
+		\noindent
+		\begin{minipage}{0.35\linewidth}
+			\begin{flushright}
+				\printauthor
+			\end{flushright}
+		\end{minipage} \hspace{15pt}
+		%
+		\begin{minipage}{0.02\linewidth}
+			\rule{1pt}{175pt}
+		\end{minipage} \hspace{-10pt}
+		%
+		\begin{minipage}{0.6\linewidth}
+			\vspace{5pt}
+			\begin{resume}
+				Cet article présente une exploration des principes fondamentaux de la cryptographie à un lecteur curieux, mais non spécialisé. Cet article distingue les mécanismes de chiffrement symétrique et asymétrique, en s'appuyant sur l'exemple de l'algorithme RSA pour illustrer le chiffrement à clé publique. Les notions mathématiques essentielles, une revue rapide de l'histoire du chiffrement et des applications pratiques permettrons au lecteur de saisir les mécanismes clés et l'importance de la place du chiffrement dans le monde actuel. L'objectif est d'offrir une introduction détaillée, mais accessible aux concepts clés de la cryptographie.
+			\end{resume}
+		\end{minipage}
+	\end{titlepage}
+	
+	
+	% Table of Contents
+	\tableofcontents
+	\newpage
+	
+
+%Début du document	
+\section{Quelques notions avant de commencer.}\label{notions.}
+
+Cet article contient des formules mathématiques et un jargon qui peuvent
+paraître inhabituels pour les non-initiés, mais je tiens à rassurer le lecteur, \textbf{il n'y a rien de compliqué}. 
+Cette première partie existe justement pour l'aider à comprendre ou à se remémorer les
+terminologies mathématiques et le jargon verbal présent dans cet article
+et nécessaire à sa bonne compréhension.
+
+\subsection{Notions de Mathématiques.}\label{notions-de-maths.}
+
+\paragraph{Def 1.1.1 :}\label{def-1.1.1}
+
+Un \(\text{entier naturel}(\mathbb{N})\) est un nombre qui permet de
+compter des unités équivalentes, on les reconnaît parce qu'il ne possède
+pas de décimales, c'est-à-dire qu'ils ne possèdent pas de nombre après
+la virgule \textit{(Exemple : $30$ est un entier naturel alors que $30,6$
+	n'est pas un entier naturel)}.
+
+\paragraph{Def 1.1.2 :}\label{def-1.1.2}
+
+Un nombre premier(\(\mathbb{P}\)) est un nombre qui est uniquement divisible par \(1\) et lui-même
+\textit{(Exemple : $7$ est divisible par $1$ et par $7$, donc lui-même).}
+
+\paragraph{Def 1.1.3 :}\label{def-1.1.3}
+
+La \(\text{division euclidienne}\) est une variante de la
+\(\text{divison}(\div)\) et qui a pour particularité de ne travailler
+qu'avec des \(\text{entiers naturels}(\mathbb{N})\), ce qui donne un
+résultat en deux parties, le \(\text{quotient}(q)\) et le
+\(\text{reste}(r)\). \textit{(Exemple : $43 / 12$ donne un quotient($q$) de $3$ et un reste($r$) de $7$)}
+
+\paragraph{Def 1.1.4 :}\label{def-1.1.4}
+
+L'opérateur \(\text{modulo}\) (\(\;\bmod\;\)) est un opérateur qui
+permet le calcul du reste d'une \(\text{division euclidienne}\) et
+qui renvoie le \(\text{reste}(r)\) comme résultat. \textit{(Exemple : $43 \bmod 12$ donne un résultat de $7$)}
+
+\paragraph{Def 1.1.5 :}\label{def-1.1.5}
+
+L'opérateur de \(\text{congruence}(\equiv)\) est un opérateur de
+vérification, comme l'opérateur d'\(\text{égalité}(=)\). Il vérifie
+qu'une valeur \(a\) donne bien un résultat \(c\) lors d'une opération
+\(a \bmod b\). Dans le cas où la vérification est fausse, alors \(a\)
+n'est pas congruent(\(\not\equiv\)) à \(c \bmod b\). \textit{(Exemple : $43$ est congruent à $7$ modulo $12$, on l'écrit ainsi $43 \equiv 7 (\bmod 12)$)}
+
+\paragraph{Def 1.1.6 :}\label{def-1.1.6}
+
+Le plus grand commun diviseur ($\gcd$) de deux nombres entiers non nuls
+est égal au plus grand entier qui les divise \textit{(exemple : le $\gcd$
+	de \(40\) et \(25\) est de \(5\) puisque leurs diviseurs communs sont
+	\(1\) et \(5\).)}
+
+\paragraph{Def 1.1.7 :}\label{def-1.1.7}
+
+L'algèbre booléenne est une algèbre mathématique dans laquelle les valeurs calculées
+ne peuvent posséder que deux états : \(faux\), \(vrai\) \textbar{}
+\(0\), \(1\) \textbar{} \(eteint\), \(allume\).
+
+\paragraph{Def 1.1.8 :}\label{def-1.1.8}
+
+La factorisation consiste à représenter un entier \(n\) comme un produit
+de nombres premier. Cela est possible en testant la divisibilité de
+\(n\) avec tous les nombres premiers, jusqu'à obtention d'un entier naturel($\mathbb{N}$) comme résultat. \textit{(Exemple : on peut factoriser $15$ en les nombres premiers $3$ et $5$)}
+
+\paragraph{Def 1.1.9 :}\label{def-1.1.9}
+
+Une table de vérité, en algèbre booléenne, est un tableau qui liste
+toutes les combinaisons possibles des valeurs (\(0\) ou \(1\)) des
+variables d'une expression booléenne et montre le résultat de
+l'expression pour chacune de ces combinaisons.
+
+\paragraph{Def 1.1.10 :}\label{def-1.1.10}
+
+La porte logique \(XOR (\oplus)\) également appelé \textit{ou exclusif}
+est un opérateur de l'algèbre booléenne dans lequel le résultat n'est
+\(1\) que si les valeurs en entrée sont différentes.
+\begin{center}
+	\textit{Table de vérité :}
+\end{center}
+ \[
+\begin{array}{|c|c|c|}
+	\hline
+	a & b & a \oplus b \\
+	\hline
+	0 & 0 & 0 \\
+	0 & 1 & 1 \\
+	1 & 0 & 1 \\
+	1 & 1 & 0 \\
+	\hline
+\end{array}
+\]
+
+\subsection{Notions de Vocabulaire.}\label{notions-de-vocabulaire.}
+
+\paragraph{Def 1.2.1 :}\label{def-1.2.1}
+
+\textbf{En clair} \textit{(Ex : "Message en clair")} : En cryptographie,
+le terme ``En clair'' fait référence à l'état d'un message ou d'une
+information qui n'a pas été chiffrée d'une quelconque manière et qui est
+compréhensible par tout le monde.
+
+\paragraph{Def 1.2.2 :}\label{def-1.2.2}
+
+\textbf{Clé de chiffrement} : La clé de chiffrement est la composante
+qui permet la transformation d'un texte, d'une information ou d'une
+valeur en clair en utilisant un algorithme de chiffrement.
+
+\section{Mise en Contexte.}\label{contexte.}
+
+\hspace{2em} La cryptographie est un domaine indéniablement lié au militaire, surtout en France, qui est longtemps restée l'un des pays les plus restrictifs sur le sujet. Ce n'est qu'après la loi sur la réglementation des télécommunications (1996)
+\footnote{\href{https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000733177}{\textit{Loi n° 96-659 du 26 juillet 1996 de réglementation des télécommunications - Légifrance.} (1996, 26 Juillet). Legifrance.gouv.fr.}}
+que la France commencera à adopter une vision différente des méthodes de chiffrement, qui était jusque ici classé comme arme de guerre de deuxième catégorie. Tout cela n'a pas aidé le grand public à démystifier la cryptographie qui, encore aujourd'hui, peut parfois être considéré comme une technologie réservée aux films d'espionnage ou au militaire. Pourtant, à l'ère d'un monde numérique toujours plus connecté, la cryptographie est présente de manière quasi permanente, bien qu'à des degrés différents. C'est notamment cette technologie qui sécurise nos transactions bancaires
+\footnote{\href{https://interstices.info/le-protocole-cryptographique-de-paiement-par-carte-bancaire/}{Thomas Genet. (2008, 21 Février). \textit{Le protocole cryptographique de paiement par carte bancaire.} Interstices.}},
+notre navigation sur internet
+\footnote{\href{https://www.cloudflare.com/fr-fr/learning/ssl/transport-layer-security-tls/}{\textit{Qu’est-ce que le TLS (Transport Layer Security) ?} (n.d.). Cloudflare.}}
+ou encore nos conversations, des plus professionnelles aux plus intimes, via des messageries sécurisées comme WhatsApp
+\footnote{\href{https://faq.whatsapp.com/820124435853543}{\textit{À propos du chiffrement de bout en bout.} (n.d.). WhatsApp.}}
+ou Signal.
+Bien que l'existence de la cryptographie se soit démocratisé aux yeux du grand public, la compréhension, même élémentaire de celle-ci et de son  impact sur le monde reste méconnue. Or, dans une société qui continue encore et encore de se numériser et qui devient de plus en plus dépendante des technologies de chiffrement sans pour autant les connaître, c'est une société qui se risque à débattre de la nécessité et de la place d'une technologie qu'elle ne comprend pas, et qui est ô combien importante. \\
+
+J'ai pour ma part découvert cette discipline lors de la mise en place de mon serveur informatique personnel, lors de la configuration de SSH, un outil de communication sécurisé entre machines, qui repose sur la cryptographie asymétrique pour garantir la sécurité des communications et qui permet, dans mon cas, de communiquer avec mon serveur partout dans le monde et de manière sécurisée. \\
+
+La naissance de cet article vient de mon questionnement sur le fonctionnement des méthodes de cryptographie asymétrique, qui ont la particularité de posséder une paire de clés \textit{(dont le fonctionnement précis est détaillé dans la suite de cet article)}, dont une clé publique, qui peut être connue de tous et qui m'ont fait me demander : \textbf{jusqu'à quel point ces méthodes sont-elles infaillibles ?} \\
+
+Ma volonté la plus humble est donc de réussir à fournir tant des informations précises et exactes que de partager mon émerveillement pour la beauté et la complexité mathématique qui composent ces technologies. C'est cette curiosité qui m'a conduit à une meilleure compréhension des enjeux que représentent les technologies pour notre monde, et que j'espère réussir à transmettre.  \\
+
+Pour cela, nous verrons donc une courte révision historique de la cryptographie afin de comprendre d'où vient cette idée étrange, bien qu'importante. Nous verrons ensuite une première méthode de chiffrement, le chiffrement symétrique, en s'appuyant sur deux objets d'études, le Chiffre de César et le One-Time-Pad (OTP). Nous étudierons notamment les faiblesses de ces méthodes qui ont conduit à la création d'une nouvelle : le chiffrement asymétrique, que nous illustrerons avec le protocole Rivet-Shamir-Adleman (RSA) et que nous mettrons à l'épreuve afin de vérifier sa robustesse. 
+
+
+\section{La petite Histoire du
+	Chiffrement.}\label{la-petite-histoire-du-chiffrement.}
+
+\subsection{Cryptographie Involontaire.}\label{egypte.}
+Les toutes premières traces de chiffrement remontent à 1900 av. J.-C.,
+en Égypte antique lorsqu'un scribe esquisse les hiéroglyphes racontant
+la vie de son seigneur. En effet, le système d'écriture des hiéroglyphes
+qu'il utilise est assez inhabituel et est volontairement complexe. Il ne faut pas s'y méprendre : il s'agit en fait d'une volonté de rendre hommage de manière
+harmonieuse à son seigneur afin de lui conférer dignité et autorité
+plutôt qu'une intention explicite de chiffrement. Quand bien même, il est ainsi possible
+de retrouver des phrases telles que "Dans l'année de notre seigneur
+mille-huit-cent-soixante-trois", plutôt que d'avoir simplement écrit
+"En 1863". \\
+
+Bien qu'il ne s'agisse pas d'un type de chiffrement volontaire et explicite, ce texte est partiellement responsable de la naissance de la cryptographie puisqu'il incorpore un élément essentiel de celle-ci : une transformation délibérée de l'écriture. \footnote{\href{https://archive.org/details/B-001-001-264/page/n47/mode/1up?view=theater}{David Kahn. (1968). The Codebreakers. In \textit{Internet Archive} (p. 71). The Macmillan Company.} (En Anglais.)}
+
+\subsection{Recette de Poterie.}\label{poterie.}
+
+La première apparition s'apparentant à de la cryptographie moderne et explicite date d'environ 1500 av. J.-C. et a été retrouvée en
+Mésopotamie, ce qui s'apparente actuellement à l'Irak et la Syrie. Elle y apparait sous forme d'une petite tablette contenant une ancienne
+formule de fabrication de glaçures pour la poterie. Le scribe, qui, visiblement, souhaitait garder sa formule bien secrètement, jouait sur le fait que les signes cunéiformes (signes pouvant représenter différentes syllabes ou sons) pouvaient posséder des valeurs syllabiques
+différentes pour un même signe et choisissait volontairement les valeurs les moins communes de chaque signe, rendant la lecture compliquée. \\
+
+Le raisonnement de cette méthode ressemble à celle de George Bernard Shaw, avec laquelle il est notamment possible d'écrire le mot anglais \textit{fish} en \textit{ghoti} (le \textit{gh} faisant le son /f/ comme dans
+le mot \textit{tou\textbf{gh}}, le \textit{o} faisant le son /i/ de \textit{w\textbf{o}men} et \textit{ti} faisant le son /sh/ de \textit{na\textbf{ti}on}). \\
+
+Ajoutons à cela que le scribe tronquait également certains sons en ignorant volontairement la consonne finale pour certains signes (par exemple si un signe représente la syllabe \textit{kA}, le signe pouvait simplement être écrit \textit{k}.) et qu'un même mot pouvait être composé de signes différents à chaque itération\footnote{\href{https://archive.org/details/B-001-001-264/page/n47/mode/1up?view=theater}{David Kahn. (1968). The Codebreakers. In \textit{Internet Archive} (p. 75). The Macmillan Company.} (En Anglais.)}.\\
+	
+Ainsi est née la cryptographie.  
+
+\clearpage
+
+\subsection{Le Chiffre de César.}\label{le-chiffre-de-cesar.}
+
+Mais l'exemple le plus connu, et qui sera ici le premier objet d'étude, c'est le chiffre de César \footnote{\href{https://sourcebooks.fordham.edu/ancient/suetonius-julius.asp}{Nom donné en rapport au fait que Jules César utilisait ce type de chiffrement pour ses communications secrètes : Halsall, P. (2019). \textit{Internet History Sourcebooks}. Fordham.edu.} (En Anglais.)}
+, qui porte officiellement le nom de chiffrement par décalage. Le concept, s'il n'a pas déjà été saisi, est simple : décaler les lettres d'un message en fonction de leurs positions dans l'alphabet et sur la base d'une fonction mathématique. Ainsi pour un message \textit{``Bonjour''} et pour une fonction \(+3\) on obtient \textit{``Erqmrxu''}.\\ 
+
+Si le concept théorique reste simple à comprendre, il est intéressant de mettre en place une description précise du procédé mathématique de cette méthode de chiffrement, ce qui permettra au lecteur de s'habituer à la lecture de formule mathématiques, présentes tout au long de cet article :
+
+\paragraph{Def 3.3.1 :}\label{def-3.3.1}
+
+Définir, pour chaque lettre,
+un nombre en fonction de sa position dans l'alphabet, ainsi \(A = 0\) de
+par sa première position dans l'alphabet, \(B = 1\), \(C = 2\), etc.
+
+\paragraph{Def 3.3.2 :}\label{def-3.3.2}
+
+Définir une valeur \(n\) nécessaire au décalage des lettres d'un message
+(dans le chiffre de César \(n=3\)).
+
+\paragraph{Def 3.3.3 :}\label{def-3.3.3}
+
+Ainsi, il est possible d'encoder chaque lettre \(x\) d'un message via la
+formule suivante : \[
+E_n(x)=(x+n)\bmod26
+\] 
+
+Dans un objectif de clarification, il est permis de découper en deux
+la présente opération :
+
+\begin{enumerate}
+	\def\labelenumi{\arabic{enumi}.}
+	\item
+	\((x+n)\) où \(x\) représente la valeur en clair
+	\textit{(\hyperref[def-1.2.1]{Def 1.2.1})} d'une lettre et où \(n\) représente
+	la valeur de décalage. En additionnant ces deux valeurs ensembles, on
+	obtient un nombre \(Z\) qui a pour objectif de servir de substitut de chiffrement
+	à la lettre en clair initiale \textit{(exemple : si \(x = 2\) (donc la
+		lettre \(D\)) et \(n=3\) le résultat de l'addition des deux valeurs
+		\(x\) et \(n\) est de \(5\) (donc la lettre \(G\))}.
+	\item
+	\(\bmod \;26\) est présent pour s'assurer que le résultat du décalage
+	d'une lettre ne sorte pas des limites de l'alphabet \textit{(exemple :
+		si \(x=25\) (donc la lettre \(Z\)) et \(n=3\), le résultat de \(x+n\)
+		est de \(28\text{,}\) or \(28\) n'est égal à aucune lettre de
+		l'alphabet).} L'opérateur modulo \textit{(\hyperref[def-1.1.4]{cf. Def
+			1.1.3})} est alors utilisé pour garantir que
+	\(x+n < 26\). Si tel n'est pas le cas, alors l'opération
+	\(\bmod \; 26\) permet de repositionner la valeur de décalage au début de l'alphabet. 
+	Cela est dû au fait que dans l'opération
+	\(Z \bmod 26\) (où \(Z=x+n\)) le résultat vaut toujours \(Z\) tant que \(Z < 26\). Si \(Z\geq26\) l'opération modulo ajuste \(Z\) pour rester dans les limites de l'alphabet. \\
+	
+	Ainsi, dans l'exemple donné, où
+	\(x=25\) et \(n=3\), le résultat de \(x+n \mod 26\) sera \(2\)
+	(donc la lettre \(C\)) et non \(28\), qui ne correspond à aucune
+	lettre de l'alphabet.
+\end{enumerate}
+
+\paragraph{Def 3.3.4 :}\label{def-3.3.4}
+
+Pour déchiffrer le message il suffit de décoder chaque lettre en
+utilisant la valeur inverse de \(n\) qui est égal à \(-n\), via la
+formule suivante : \[
+D_n(x)=(x-n) \bmod 26
+\]
+
+Il est important de noter que la valeur \(n\) constitue notre clé de
+chiffrement et de déchiffrement. C'est cette clé qui permet d'appliquer
+le décalage, et par conséquent, le chiffrement notre message. Le fait
+que la même clé est utilisée pour chiffrer et déchiffrer un message est
+appelé chiffrement symétrique, car la même clé est utilisée dans les
+deux sens. \\
+
+\newpage
+
+Sans surprise, un telle méthode de chiffrement connaît des failles, la première, c'est l'attaque par force brute, en effet, le nombre de clés ne se limite qu'à $26$ ce qui, même pour un être humain, ne prend que peu de temps à tester toutes les clés $n$ possible une par une, jusqu'à obtention d'un résultat ressemblant à un message. Une autre méthode de cryptanalyse, appelée attaque par analyse fréquentielle, consiste à prendre en compte la lettre la plus courante de la langue dans laquelle le message a été écrit (en français, il s'agit de la lettre E) et de voir quelle lettre revient le plus dans le message chiffré. Par exemple, dans le message \textit{"SL JOPMMYLTLUA LZA CYHPTLUA BUL KPZJPWSPUL PUALYLZZHUAL !"} La lettre avec le plus d'itération est la lettre L, or, on sait que le message d'origine est écrit en français, on peut donc supposer que L représente E. La différence de position entre les deux lettres est de sept, ainsi, si l'on décale le message de sept lettres en arrière, on obtient \textit{"LE CHIFFREMENT EST VRAIMENT UNE DISCIPLINE INTÉRESSANTE !"}. \\
+
+Si tant est qu'à l'époque de l'Empire Romain, cela ne posait pas vraiment de problèmes dû à un taux d'alphabétisation relativement bas, il se trouve, qu'avec le temps, les méthodes de cryptanalyse se sont considérablement améliorées, et ont fini par imposer la nécessité de créer des algorithmes de chiffrement symétrique bien plus robustes. \\
+
+C'est ainsi que, bien plus tard dans l'histoire, au début de l'année 1883, Auguste Kerckhoffs, un cryptologue militaire néerlandais énonce le principe de Kerckhoffs 
+\footnote{\href{https://www.petitcolas.net/kerckhoffs/crypto_militaire_1.pdf}{Kerckhoffs, A. (1883). LA CRYPTOGRAPHIE MILITAIRE. \textit{Journal Des Sciences Militaires}, IX, 161–191.}}
+, qui établit plusieurs règles afin de garantir la sécurité d'un système de chiffrement. Mais celle à retenir est la suivante : \textit{(en parlant d'un système de chiffrement) "Il faut qu’il n’exige pas le secret, et qu’il puisse sans inconvénient tomber entre les mains de l’ennemi."} Principe selon lequel la sécurité d'un système de chiffrement ne doit pas reposer sur la méconnaissance par l'adversaire de l'algorithme utilisé, mais uniquement sur sa méconnaissance de la clé. Ainsi, l'algorithme doit être assez sophistiqué pour pouvoir être aux mains d'un attaquant sans que celui-ci puisse être en capacité de déchiffrer des messages chiffrés par ce dit algorithme. C'est cette règle en particulier qui régira la conception de système cryptographique symétriques plus robustes.
+
+\section{Chiffrement Symétrique.}\label{one-time-pad-et-chiffrement-symuxe9trique.}
+
+\subsection{One Time Pad.}
+
+Il existe plusieurs méthodes de chiffrement symétrique, chacune
+présentant avantages et inconvénients, mais une analyse exhaustive de
+chaque méthode serait longue et fastidieuse. Par conséquent, nous nous concentrerons sur une méthode particulière : le One Time Pad (OTP), qui
+se distingue des autres par une promesse unique : \textbf{être
+	incassable}. Cette affirmation est particulièrement remarquable dans le
+domaine de la cryptographie, où l'on tend à éviter tout sentiment de
+sécurité absolue et à considérer tout système comme théoriquement
+vulnérable. Cependant, la promesse peut bel et bien être tenue si des
+conditions bien précises sont réunies :
+
+\paragraph{Def 4.1.1 :}\label{def-4.1.1}
+
+La clé de chiffrement doit être générée de manière véritablement
+aléatoire, sans motifs prédictibles.
+
+\paragraph{Def 4.1.2 :}\label{def-4.1.2}
+
+La longueur de la clé doit être égale à celle du message à chiffrer.
+
+\paragraph{Def 4.1.3 :}\label{def-4.1.3}
+
+Chaque clé générée ne doit être utilisée qu'une seule fois, afin
+d'éviter les attaques par analyse statistique.
+\\
+
+Ainsi, une fois toutes ces conditions réunies, tout message peut être
+chiffré à l'aide du One Time Pad, garantissant ainsi l'inviolabilité de
+l'information ou du message chiffré. \\
+
+Le OTP repose sur le fonctionnement
+de la porte logique \(XOR (\oplus)\)
+\textit{(\hyperref[def-1.1.10]{Def 1.1.10})} pour transformer une
+séquence de bits en une autre. L'avantage de \(XOR (\oplus)\) réside
+dans le fait que pour un bit chiffré égal à \(1\), la probabilité que le
+bit en clair soit \(0\) ou \(1\) est équivalente (voir table de vérité
+en \textit{\hyperref[def-1.1.10]{Def 1.1.10}}). Illustrons cela avec un
+exemple pour clarifier les choses : soit un message en clair représenté
+par la séquence de bits \(0110100\) et une clé \(1100101\), il est
+possible de chiffrer chaque bit du message en le calculant avec le bit
+de la clé situé à la même position. Par exemple, on peut calculer le
+premier bit du message et le premier bit de la clé avec l'opération
+\(XOR (\oplus)\) comme suit : \[
+0 \oplus 1 = 1
+\] Pour chiffrer le deuxième bit, même opération : \[
+1 \oplus 1 = 0
+\] 
+
+Puis récidiver la transformation pour chaque bit jusqu'à obtention du
+message chiffré \(1010001\). Ainsi, un adversaire n'ayant accès qu'à ce
+message chiffré ne pourrait en déduire le message en clair, car chaque
+bit a une probabilité équivalente d'être \(1\) ou \(0\). En d'autres
+termes, en l'absence de la clé de chiffrement, ce message chiffré
+pourrait très bien correspondre à un message en clair initial
+\(1111111\) ou également \(0000000\). Plus concrètement, il existe un
+nombre de figures exponentiellement grand qui est uniquement limité par
+la longueur du message. En termes mathématiques, pour un message de
+longueur \(n\), il y a \(2^n\) configurations possibles.
+
+\newpage
+
+\subsection{Problème de Transmission.}
+
+Si le OTP possède une robustesse qui, en plus d'être impressionnante,
+n'est pas à écarter, il possède pourtant une faiblesse qu'il partage
+avec tous ses collègues du chiffrement symétrique : la transmission de
+la clé. En effet, dans le cas où un message chiffré par une méthode de
+chiffrement symétrique est envoyé, il faut pouvoir transmettre la clé au
+récepteur du message afin que ce dernier puisse le déchiffrer. Et il
+faut le faire sur un canal de communication suffisamment sécurisé pour
+qu'elle ne soit pas interceptée, auquel cas l'action de chiffrer le
+message perd son sens. Se présente donc le problème suivant :
+
+\paragraph{Def 4.2.1 :}\label{def-4.2.1}
+
+\textit{Si l'on peut transmettre la clé via un canal suffisamment sécurisé
+	pour qu'elle ne soit pas interceptée, pourquoi ne pas directement
+	envoyer le message en clair (\hyperref[def-1.2.1]{Def 1.2.1}) via ce même
+	canal sécurisé ?} \\
+
+En effet, il existe bien des solutions à ce problème, un exemple
+classique consiste à définir un canal sécurisé de manière unique pour la
+transmission de la clé, comme une rencontre en personne. Seulement cet
+exemple reste peu pratique selon les situations et notamment dans le cas
+du OTP, puisque selon la \textit{\hyperref[def-4.1.3]{Def 4.1.3}},
+chaque clé doit être générée de manière unique, ce qui nécessiterait
+donc une rencontre physique à chaque message, on en revient donc à notre
+problème \textit{\hyperref[def-4.2.1]{Def 4.2.1}}. De plus, une telle
+rencontre présente rapidement des limitations pratiques. Elle peut
+nécessiter des moyens considérables selon la sensibilité des
+informations à échanger et peut même se révéler impraticable dans les
+contextes de communications longue distance.
+
+\section{Chiffrement Asymétrique.}\label{chiffrement-asymuxe9trique-et-algorithme-rsa.}
+
+Ainsi est introduit en 1976, par Whitfield Dillie et Martin E. Hellman,
+le concept de cryptographie à clé publique, également appelé
+cryptographie asymétrique, qui sera le terme utilisé dans la suite de
+l'article. Ce concept repose sur la génération d'une paire de clés de
+chiffrement, à l'instar du chiffrement symétrique qui utilise une clé
+unique. La paire de clés se compose respectivement d'une clé privée
+\(D\) de déchiffrement, qui doit rester secrète, et d'une clé publique
+\(E\) de chiffrement, qui, comme son nom l'indique, peut être partagé de
+manière publique et dont le contenu peut être connu de tous. Cela résout
+ainsi le problème de transmission de la clé, comme identifié en
+\textit{\hyperref[def-4.2.1]{Def 4.2.1}}. \\
+
+Le fonctionnement et la sécurité de cette méthode repose sur le fait que
+bien que \(D\) est déterminé par \(E\), il est en théorie impraticable
+de calculer \(D\) à partir de \(E\). Ainsi toute personne en possession
+de \(E\) ne peut en déduire \(D\) et n'est donc pas en mesure de
+déchiffrer les messages chiffrés avec \(E\).
+\footnote{\href{https://dl.acm.org/doi/pdf/10.1145/1499799.1499815}{Diffie,
+		W., \& Hellman, M. E. (1976). Multiuser cryptographic techniques.
+		\textit{Proceedings of the June 7-10, 1976, National Computer Conference
+			and Exposition on - AFIPS '76}.} (En Anglais.)} \\
+
+Une mise en pratique concrète de cette méthode ressemblerait à ceci :
+
+\begin{itemize}
+	\item
+	Alice veut pouvoir recevoir des messages de la part de Bob de manière
+	sécurisée.
+	\item
+	Alice génère deux clés, une clé privée \(D\), qu'elle garde pour elle,
+	et une clé publique \(E\), qu'elle envoie à Bob.
+	\item
+	Bob envoi un message \(M\) à Alice qu'il chiffre avec la clé publique
+	\(E\).
+	\item
+	Alice reçoit le message chiffré \(C\) puis le déchiffre avec la clé
+	privée \(D\) et obtient le message \(M\).
+	\item
+	Marie, qui espionnait la conversation depuis tout ce temps, a réussi à
+	intercepter le message chiffré \(C\) qu'a envoyé Bob et la clé
+	publique \(E\) qu'il a utilisé pour le chiffrer.
+	\item
+	Malgré toutes ses tentatives, Marie n'arrive pas à déchiffrer le
+	message \(C\) de Bob.\\
+\end{itemize}
+
+Vient enfin le moment de poser l'interrogation qui est le cœur du
+raisonnement de cet article et qui est responsable de son existence :
+
+\paragraph{Def 5.0.1 :}\label{def-5.0.1}
+
+\textit{Pour un individu \(A\) en possession d'une clé de chiffrement
+	publique \(E\) et d'un message \(C\) chiffré par \(E\), pourquoi \(A\)
+	n'est pas en capacité de déchiffrer \(C\) ?} \\
+
+Pour aborder cette problématique, nous utiliserons l'algorithme de
+chiffrement asymétrique Rivest-Shamir-Adleman (RSA) comme objet d'étude.
+Nous nous concentrerons spécifiquement sur les principes mathématiques
+régissant la génération de la paire de clés.
+
+\clearpage
+
+\subsection{Algorithme RSA :}\label{algorithme-rsa}
+
+Dans un premier temps, afin de pouvoir établir les deux formules qui
+constituent les clés de chiffrement, il est nécessaire de définir toutes
+les valeurs qui les composent :
+
+\paragraph{Def 5.1.1 :}\label{def-5.1.1}
+
+Définir \(p\) et \(q\), qui doivent être de grands nombres premiers
+générés de manière véritablement aléatoire, sans motif de
+prédictibilité. \[ p,q \in \mathbb{P} \] 
+
+\paragraph{Def 5.1.2 :}\label{def-5.1.2}
+
+Calculer \(n\), produit de \(p\) et \(q\) : \[ n = p \times q\] 
+
+\paragraph{Def 5.1.3 :}\label{def-5.1.3}
+
+Calculer \(\phi (n)\), égal au totient de \(n\) tel que :
+\[ \phi (n) = (p-1)\times(q-1)\] 
+
+\paragraph{Def 5.1.4 :}\label{def-5.1.4} 
+
+Définir \(e\) tel que :
+\[ \displaylines{ 1<e<\phi (n)\text{,} \quad \gcd(e, \phi(n)) =1} \]
+
+\paragraph{Def 5.1.5 :}\label{def-5.1.5}
+
+Calculer \(d\), égal à l'inverse modulaire de \(e \bmod \phi(n)\) tel que :
+\[ d \times e \equiv 1 \;\; (\bmod \phi(n) ) \] 
+
+Une fois toutes ces valeurs définies, il est possible de chiffrer des
+messages avec la paire de clés via les deux formules suivante :
+
+\paragraph{Def 5.1.6 :}\label{def-5.1.6}
+
+Pour la clé publique \(E\) : \[ C = M^e \bmod n \] 
+
+\paragraph{Def 5.1.7 :}\label{def-5.1.7}
+
+Pour la clé privée \(D\) : \[ M = C^d \bmod n \] \\
+
+Dans une volonté de clarification, nous allons mettre l'algorithme RSA à
+exécution avec un exemple \(R\) concret : \\
+
+Pour une valeur \(p = 11\) et \(q = 13\), \(n\) est donc égal à \(143\)
+en appliquant la \textit{\hyperref[def-5.1.2]{Def 5.1.2}} puisque :
+\[11 \times 13 = 143\]En appliquant la
+\textit{\hyperref[def-5.1.3]{Def 5.1.3}}, \(\phi(n) = 120\) puisque :
+\[  (11-1)\times (13-1) = 10 \times 12 = 120 \]En appliquant la
+\textit{\hyperref[def-5.1.4]{Def 5.1.4}}, \(e = 7\) puisque :
+\[ 1 < 7 < 120, \quad \gcd(7, 120) = 1 \]En appliquant la
+\textit{\hyperref[def-5.1.5]{Def 5.1.5}}, \(d = 103\) puisque :
+\[	\begin{array}{l}
+	103 \times 7 = 721 \\
+	721 \equiv 1 \;\; (\bmod \; 120)
+\end{array}
+\]
+Ainsi, pour une valeur \(M = 104\) \textit{(correspondant à la lettre h en
+	ASCII)}, il est possible d'obtenir une valeur chiffrée \(C\) avec la clé
+publique \(E\) via la formule suivante :
+\[C = 104^{7} \bmod 143 = 91 \]Donc \(C = 91\), qu'il est possible de
+déchiffrer avec la clé privée \(D\) via la formule suivante et d'obtenir
+un résultat \(T\) : \[T = 91^{103} \bmod 143 = 104 \] Dans notre exemple,
+\(T=M\), il est donc possible d'affirmer que le chiffrement a été
+effectif, puisque le résultat du déchiffrement \(T\) est bien égal à la
+valeur en clair initiale \(M\). \\
+
+Nous allons maintenant donc analyser la situation décrite dans la
+problématique \textit{\hyperref[def-5.0.1]{Def 5.0.1}} du point de
+vue d'un attaquant et explorer les méthodes possibles et disponibles de
+ce point de vue afin de comprendre pourquoi il est impossible de
+déterminer \(M\) à partir des valeurs \(E\) et \(C\).
+
+\clearpage
+
+\subsection{Attaque par Inversion :}\label{attaque-par-inversion}
+
+La première méthode qu'il est possible de mettre en place, c'est celle
+de déduire \(M\) en tentant d'inverser la formule de chiffrement
+\textit{\hyperref[def-5.1.6]{Def 5.1.6}}. Le problème rencontré avec
+cette méthode, c'est que l'opérateur modulo (\(\bmod\)) ne permet pas
+une telle chose. En effet, Dans une opération \(O\) tel que
+:\[x \bmod y = w\]où \(y\) et \(w\) sont des valeurs connues et \(x\)
+une inconnue, l'une des méthodes, qui sera nommée méthode \(F\),
+consiste à retrouver \(x\) en testant toutes les valeurs comprises entre
+\(0\) et \(\infty\) jusqu'à obtention d'une valeur qui satisfait \(O\).
+Une méthode qui, en plus d'être longue et fastidieuse, ne permet pas
+d'obtenir un résultat satisfaisant. En effet, si elle est mise à
+exécution sur l'exemple \(R\) décrit plus haut, nous avons ainsi
+connaissance, en notre position d'attaquant, de la formule de
+chiffrement \(E\) tel que : \[x^7 \bmod 143 = 91\]Cette formule de
+chiffrement peut ainsi être satisfaite avec \(x=104\), \(247\), \(390\),
+\(533\), \(676\), \(819\) ou encore \(962\) si l'on ne se limite qu'aux
+valeurs comprises entre \(0\) et \(1000\). Une grande quantité de
+valeurs peuvent ainsi satisfaire la formule
+\textit{\hyperref[def-5.1.6]{Def 5.1.6}}, ce qui rend toute volonté
+de retrouver la valeur en clair initiale complexe. Une version plus
+avancée, rapide et logique de cette technique consiste à partir du
+constat que le message en clair a été encodé avec une norme d'encodage
+de caractère comme l'ASCII et donc de ne tester que les valeurs
+comprises dans cette norme d'encodage. Donc pour l'ASCII, seules les
+valeurs comprises entre \(0\) et \(127\), seront testées. Ce qui, dans
+l'exemple \(R\), fonctionne puisque l'unique résultat obtenu est bel et
+bien égal à \(104\). Bien que cette technique puisse sembler efficace
+pour le moment, il est crucial de mentionner un aspect fondamental
+souvent négligé : lors du chiffrement d'un message avec RSA, un
+algorithme de remplissage (padding) est généralement appliqué avant le
+chiffrement proprement dit. Un algorithme couramment utilisé pour cela
+est l'OAEP (Optimal Asymmetric Encryption Padding). Bien qu'une
+description exhaustive de ce processus ne soit pas fournie dans cet
+article, il est important de noter que l'objectif de ces algorithmes est
+d'ajouter une couche d'aléatoire à la valeur en clair initiale \(M\) et
+d'augmenter sa longueur avec des données, elles aussi, aléatoires. Cela
+vise à rendre inefficaces les attaques comme exposées précédemment.
+
+\clearpage
+
+\subsection{Attaque par Factorisation
+	:}\label{attaque-par-factorisation}
+
+La deuxième méthode, plus connue, et qui sera nommée Méthode \(G\),
+consiste à retrouver la valeur \(d\) à partir de la clé de chiffrement
+\(E\). Pour rappel, \(d\) est égal à l'inverse modulaire de
+\(e \bmod \phi(n)\), soit :
+\[ d \times e \equiv 1 \;\; (\bmod \phi(n) ) \](comme décrit en
+\textit{\hyperref[def-5.1.5]{Def 5.1.5}}). \\
+
+Seulement, un attaquant comme décrit dans la problématique
+\textit{\hyperref[def-5.0.1]{Def 5.0.1}}, ne dispose pas de la valeur
+\(\phi(n)\), ni des facteurs premiers \(p\) et \(q\) qui sont
+nécessaires au calcul de \(\phi(n)\). Par conséquent, cette méthode
+consiste à déterminer \(p\) et \(q\) à partir de \(n\). Cela est
+possible parce qu'un attaquant sait que \(p\) et \(q\) sont
+nécessairement des nombres premiers. Ainsi, il peut tenter de factoriser
+\textit{(\hyperref[def-1.1.7]{Def 1.1.7})} \(n\) en tant que produit de
+\(p\) et \(q\). Une fois \(p\) et \(q\) déterminés, il suffit de
+calculer \(\phi(n)\) comme décrit en \textit{\hyperref[def-5.1.3]{Def
+		5.1.3}}. Une application pratique basée sur l'exemple \(R\) est
+illustrée ainsi :
+
+\[ \begin{array}{l}
+	n = 143 \\
+	\\
+	143 \bmod 2 = 1 \\
+	143 \bmod 3 = 2 \\
+	143 \bmod 5 = 3 \\
+	143 \bmod 7 = 3 \\
+	143 \bmod 11 = 0 \\
+	143 \bmod 13 = 0 \\
+\end{array} \]
+
+Dans ce cas, \(p = 11\) et \(q=13\) puisqu'une opération
+\(n \bmod \mathbb{P}\) donne \(0\) pour ces deux valeurs, indiquant que
+\(n\) est divisible par ces nombres premiers. \\
+
+Bien que cette méthode puisse sembler efficace, elle néglige un aspect
+crucial : la longueur de la clé. En effet, dans l'exemple \(R\) donné,
+les valeurs des nombres premiers \(p = 11\) et \(q = 13\) permettent une
+factorisation rapide de \(n\). Toutefois, si l'on augmente
+significativement ces valeurs, le temps nécessaire pour factoriser \(n\)
+augmente de manière exponentielle. Par exemple, pour une clé d'une
+longueur de \(2048\) bits, on estime que le temps requis pour effectuer
+une telle factorisation, même avec les super-ordinateurs les plus
+puissants actuellement disponibles, s'étendrait sur plusieurs milliards
+d'années. Cette estimation se base sur les résultats formulés dans une
+expérience de 2009 faite par une équipe de spécialistes en informatique,
+en cryptographie et en mathématiques.
+\footnote{\href{https://eprint.iacr.org/2010/006.pdf}{Kleinjung,
+		T., Aoki, K., Franke, J., Lenstra, A., Thomé, E., Bos, J., Gaudry, P.,
+		Kruppa, A., Montgomery, P., Osvik, D., Te Riele, H., Timofeev, A., \&
+		Zimmermann, P. (2010). \textit{Factorization of a 768-bit RSA modulus}
+		(p.~14).} (En Anglais.)} \\
+
+Expérience qui a consisté à casser une clé
+RSA de \(768\) bits, avec succès et qui aura nécessitée environ deux
+années. On y apprend notamment que plus de \(10^{20}\) opérations ont
+été nécessaires à la factorisation d'une valeur \(n\). Ainsi, si l'on
+utilise un super-ordinateur comme le \textbf{Frontier}
+\footnote{\href{https://www.olcf.ornl.gov/frontier/}{Super-ordinateur le plus puissant au monde actuellement : https://www.olcf.ornl.gov/frontier/} (En Anglais)}
+, capable de \(1,1 \times 10^{18}\) opérations par
+secondes et que l'on considère que \(10^{20}\) opérations ont été
+nécessaires, il est possible de déterminer le temps que mettrait
+\textbf{Frontier} pour casser une clé RSA de \(768\) bits :
+\[ \frac{10^{20}}{1,1 \times 10^{18}} \approx 91 \]Soit environ \(91\)
+secondes. \clearpage
+
+Ainsi, il est possible de considérer une clé RSA de \(2048\)
+bits comme étant \(10^{16}\) fois plus complexe à calculer qu'une clé de
+\(768\) bits en s'appuyant sur la complexité de l'algorithme General
+Number Field Sieve (GNFS) comme suit : \\
+\[ \begin{array}{l}
+	\textbf{Formule :}\\
+	L(n) = \exp\left(\left({\frac{64}{9}}\right)^{1/3} \left(\ln n\right)^{\frac{1}{3}} \left(\log \ln n\right)^{\frac{2}{3}}\right) \\ \\
+	\textbf{Application de la formule sur les valeurs } 2048 \textbf{ et } 768 \textbf{ :}\\
+	L(2^{2048}) = \exp\left(\left({\frac{64}{9}}\right)^{1/3} \left(\ln 2^{2048}\right)^{1/3} \left(\log \ln 2^{2048}\right)^{2/3}\right) \\
+	L(2^{768}) = \exp\left(\left({\frac{64}{9}}\right)^{1/3} \left(\ln 2^{768}\right)^{1/3} \left(\log \ln 2^{768}\right)^{2/3}\right) \\ \\
+	\textbf{Calcul de } (\ln 2^{2048}) \textbf{ et } (\ln 2^{768}) \textbf{ en utilisant la propriété} \\ \textbf{des logarithmes telle que } \ln(a^{b})=b \ln(a) \textbf{ :}\\
+	\ln 2^{2048} = 2048 \times \ln 2 \approx 1419.565 \\
+	\ln 2^{768} = 768 \times \ln 2 \approx 532.337 \\ \\
+	\textbf{Calcul de } (\log \ln 2^{2048}) \textbf{ et } (\log \ln 2^{768}) \textbf{ :}\\
+	\log \ln 2^{2048} \approx \log 1419.565 \approx 3.152 \\
+	\log \ln 2^{768} \approx \log 532.337 \approx 2.726 \\
+	\\
+	\textbf{Ainsi :}\\
+	L(2^{2048}) \approx \exp\left(\left({\frac{64}{9}}\right)^{1/3} \left(1419.565\right)^{1/3} \left(3.152\right)^{2/3}\right) \\
+	L(2^{768}) \approx \exp\left(\left({\frac{64}{9}}\right)^{1/3} \left(532.337\right)^{1/3} \left(2.726\right)^{2/3}\right)\\ \\
+	\textbf{Comparaison de } L(2^{2048}) \textbf{ et } L(2^{768}) \textbf{ telle que :}\\
+	\dfrac{L(2^{2048})}{L(2^{768})} \approx \dfrac{\exp\left(\left({\frac{64}{9}}\right)^{1/3} \left(1419.565\right)^{1/3} \left(3.152\right)^{2/3}\right)}{\exp\left(\left({\frac{64}{9}}\right)^{1/3} \left(532.337\right)^{1/3} \left(2.726\right)^{2/3}\right)} \\ \\
+	\textbf{Utilisation de la propriété des exponentielles telle que :}\\
+	\dfrac{\exp(a)}{\exp(b)} = \exp(a-b) \\ \\
+	\textbf{Ainsi :}\\
+	\dfrac{L(2^{2048})}{L(2^{768})} \approx \exp\left(\left({\frac{64}{9}}\right)^{1/3} \left(\left(1419.565\right)^{1/3} \left(3.152\right)^{2/3} - \left(532.337\right)^{1/3} \left(2.726\right)^{2/3}\right)\right) \\ \\
+	\textbf{Approximation des termes telle que :} \\
+	\left(\dfrac{64}{9}\right)^{1/3} \approx 1.923 \\
+	\left(1419.565\right)^{1/3} \approx 11.239 \\
+	\left(3.152\right)^{2/3} \approx 2.150 \\
+	\left(532.337\right)^{1/3} \approx 532.337 \\
+	\left(2.726\right)^{2/3} \approx 1.952 \\ \\
+	
+	\\ \end{array} \] \clearpage
+
+\[ \begin{array}{l}
+
+	
+	\textbf{Ainsi :}\\
+	\dfrac{L(2^{2048})}{L(2^{768})} \approx \exp\left(1.923\left(11.239 \times 2.150 - 8.105 \times 1.952\right)\right) \\ \\
+	\textbf{Approximation des termes telle que :} \\
+	11.239 \times 2.150 \approx 24.164 \\
+	8.105 \times 1.952 \approx 15.821 \\ \\
+	\textbf{Ainsi :}\\
+	\dfrac{L(2^{2048})}{L(2^{768})} \approx \exp(1.923(24.164-15.821)) \\ \\
+	\textbf{Calcul de la différence tel que :} \\
+	24.164-15.821 = 8.343 \\ \\
+	\textbf{Ainsi :}\\
+	\dfrac{L(2^{2048})}{L(2^{768})} \approx \exp(1.923 \times 8.343) \approx \exp(16.044) \approx 10^{16.044} \approx 10^{16}
+\end{array} \] \\
+Donc, selon cette grossière approximation, le temps nécessaire à \textbf{Frontier} pour factoriser \(n\) en
+considérant une clé de \(2048\) bits est donc approximativement égal à :
+\(91 \times 10^{16} \; \text{secondes}\). Soit environ vingt-huit milliards huit cent millions d'années, ce qui rend toute mise en pratique
+visant à casser une clé RSA via la factorisation de \(n\) vaines. 
+
+\section{L'algorithme RSA est il incassable ?}\label{rsa-incassable}
+
+Comme discuté précédemment, la robustesse de RSA, ainsi que des systèmes
+de chiffrement asymétrique en général, repose sur le temps nécessaire
+pour casser les algorithmes de chiffrement et de déchiffrement qui
+constituent les clés. Cela confère un statut particulier à ces
+algorithmes, car ils sont théoriquement vulnérables, mais pratiquement
+incassables dans un délai raisonnable avec les moyens actuels.
+
+Cela signifie-t-il pour autant que nous ne parviendrons jamais à casser
+une clé RSA dans des temps acceptables pour l'être humain ? Deux
+scénarios plausibles méritent d'être envisagés :
+
+\begin{itemize}
+	\item
+	Premièrement, il se pourrait que nos ordinateurs deviennent
+	suffisamment puissants pour factoriser \(n\) dans des temps considérés
+	comme raisonnables pour l'être humain. Un exemple concret de cela peut
+	être trouvé en
+	\textit{\hyperref[attaque-par-factorisation]{sous-section 5.3 où l'on peut comparer la capacité de calcul entre l'expérience de 2009 et celle du super-ordinateur \textbf{frontier}}}. 
+	Cependant, cela
+	reste peu probable. Un tel scénario nécessiterait un bond
+	technologique majeur pour atteindre des capacités de calcul
+	astronomiques. De plus, ce défi pourrait être facilement surmonté en
+	augmentant simplement la taille des nombres premiers \(p\) et \(q\),
+	rendant ainsi le temps nécessaire à la factorisation exponentiellement
+	plus long.
+	\item
+	Deuxièmement, l'informatique quantique fait des progrès considérables
+	à ne pas prendre à la légère. En effet, il existe l'algorithme de
+	Shor, un algorithme reposant sur les principes de l'informatique
+	quantique, capable de factoriser \(n\) en des temps relativement
+	courts. Jusqu'à présent, l'algorithme de Shor a notamment été démontré
+	en 2001, par IBM
+	\footnote{\href{https://doi.org/10.1038/414883a}{Vandersypen,
+			L. M. K., Steffen, M., Breyta, G., Yannoni, C. S., Sherwood, M. H.,
+			\& Chuang, I. L. (2001). Experimental realization of Shor's quantum
+			factoring algorithm using nuclear magnetic resonance. \textit{Nature},
+			\textit{414}(6866), 883--887.} (En Anglais)}, pour factoriser \(15\)
+	en \(3\) et \(5\). Bien que cette démonstration soit simpliste, une
+	mise en œuvre à plus grande échelle pourrait sérieusement menacer la
+	sécurité de nombreux protocoles utilisant RSA ou d'autres systèmes de
+	chiffrement asymétrique. Il est d'ailleurs estimé qu'un ordinateur
+	quantique équipé de 20 millions de qbits (bits quantiques) pourrait,
+	en théorie, casser une clé RSA de \(2048\) bits en un temps record de
+	huit heures\footnote{\href{https://doi.org/10.22331/q-2021-04-15-433}{Gidney,
+			C., \& Ekerå, M. (2021). How to factor 2048 bit RSA integers in 8
+			hours using 20 million noisy qubits. \textit{Quantum}, \textit{5}, 433.}
+		(En Anglais)}.
+\end{itemize}
+
+\section{Conclusion.}\label{conclusion}
+
+Nous avons pu voir que, depuis son invention, la cryptographie et le
+chiffrement n'ont cessé
+d'évoluer, de s'améliorer afin de proposer des solutions toujours plus
+complètes, robustes et pratiques. Cette évolution est marquée par une
+recherche constante de nouvelles techniques pour protéger l'information
+contre des adversaires possédant des méthodes de plus en plus sophistiquées, partant de la
+simple volonté de protéger une recette de poterie et allant jusqu'à la
+sécurisation des systèmes bancaires, de la navigation sur internet, de
+la transmission de donnée, etc. Les systèmes de chiffrement asymétrique
+sont aujourd'hui devenus indispensables dans le domaine de la
+cryptographie et sont par conséquent régulièrement mis à l'épreuve afin
+de tester leur robustesse et de les rendre toujours plus solide avant
+que le pire n'arrive. \\
+
+Nous avons également pu répondre à la problématique
+\textit{\hyperref[def-5.0.1]{Def 5.0.1}} en expliquant que l'individu \(A\)
+ne peut déduire \(C\) à partir de \(E\) qu'en utilisant des attaques
+dont deux ont été démontrés et démontés dans cet article. Ces méthodes
+ont montré leurs limites face à des algorithmes prévus pour les contrer,
+comme le OAEP, qui montrent l'importance de régulièrement tester les
+algorithmes de chiffrement, ou ont révélé leur impraticabilité face à
+des clés suffisamment longues. Par exemple, pour des clés de \(2048\)
+bits, le temps de calcul nécessaire pour les casser dépasse largement
+l'échelle de temps humainement raisonnable, même avec les
+super-ordinateurs les plus avancés comme le \textbf{Frontier}. Les
+résultats des expériences de factorisation menées en 2009 sur une clé de
+\(768\) bits renforcent cette affirmation, indiquant que le temps requis
+pour une clé de \(2048\) bits serait de plusieurs milliards d'années. \\
+
+Enfin, une conclusion définitive sur un tel sujet reste complexe, l'évolution des méthodes de cryptanalyses et de l'informatique quantique laisse à penser que tôt ou tard, les systèmes cryptographiques actuels finiront par céder et montrer leurs faiblesses. Est-ce pour autant que l'avenir de la cryptographie est alors condamné ? Non, l'être humain se fait la course à lui même, car en cherchant à améliorer nos algorithmes de chiffrement, nous ne faisons que repousser les limites de notre compréhension des mathématiques, et par conséquent, de notre propre capacité de raisonnement et de réflexion. Des exemples comme la cryptographie post-quantique, qui est branche de la cryptographie réservée à la mise en place d'algorithmes résistant à l'informatique quantique, nous montrent bien que nous sommes en capacité de repousser nos propres limites.
+
+\section{Lectures Recommandées.}
+
+\begin{itemize}
+	\item 
+	Kahn, D. (1996). \textit{The Codebreakers}. Simon and Schuster. (En Anglais.)
+	\item
+	\href{https://cyber.gouv.fr/sites/default/files/2021/03/anssi-guide-mecanismes_crypto-2.04.pdf}{ANSSI. (2020). \textit{Guide des mécanismes cryptographiques règles et recommandations concernant le choix et le dimensionnement des mécanismes cryptographiques.} ANSSI.}
+	\item
+	\href{https://doi.org/10.1145/1499799.1499815}{Diffie, W., \& Hellman, M. E. (1976). \textit{Multiuser cryptographic techniques. Proceedings of the June 7-10, 1976, National Computer Conference and Exposition on - AFIPS ’76.}} (En Anglais.)
+	\item 
+	\href{https://pablo.rauzy.name/teaching/is/07-cryptanalyse.pdf}{Rauzy, P. (n.d.). \textit{Introduction à la sécurité.} Université Paris 8.}
+	\item 
+	\href{https://people.csail.mit.edu/rivest/pubs/RSA78.pdf}{Rivest, R., Shamir, A., \& Adleman, L. (1978). \textit{Programming Techniques A Method for Obtaining Digital Signatures and Public- Key Cryptosystems.}}
+\end{itemize}
+
+\end{document}

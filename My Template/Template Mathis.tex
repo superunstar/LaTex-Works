@@ -1,0 +1,124 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+\usepackage{ulem}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amssymb, amsmath, changepage, darkmode,tabularx,siunitx}
+%\enabledarkmode
+\usepackage{makecell}
+\usepackage[top=1in,bottom=1in,right=1in,left=1in]{geometry}
+
+\usepackage{mdframed}
+
+\usepackage{chemfig}
+\usepackage{array}
+\usepackage{textgreek}
+\usepackage{multirow}
+\usepackage{tocloft}
+
+\usepackage{mathpazo}
+\usepackage{etoolbox}
+\usepackage{titling}
+\usepackage[french]{babel}
+\usepackage{datetime}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+
+\definecolor{indigo}{RGB}{75, 0, 130}
+
+\hypersetup{
+	pdftitle={Lorem Ipsum},
+	pdfauthor={Mathis Lefebvre},
+	pdfsubject={},
+	pdfkeywords={},
+	pdfcreator={LaTeX with hyperref},
+	pdfproducer={TeX},
+	pdfstartview={FitV}, % Ajuste la vue de démarrage du document PDF
+	colorlinks=true, % Active les liens colorés
+	linkcolor=indigo, % Couleur des liens internes
+	citecolor=blue, % Couleur des références bibliographiques
+	urlcolor=blue % Couleur des URL
+}
+
+\usepackage[some]{background}
+\usepackage{enumitem}
+\setlist[itemize]{label=\textbullet}
+\setlength{\parindent}{0pt}
+
+\AddToHook{cmd/section/before}{\clearpage}
+
+\newenvironment{resume}{%
+	\renewcommand{\abstractname}{Résumé}% 
+	\begin{abstract}
+	}{%
+	\end{abstract}
+}
+
+% Configurer les couleurs de la table des matières
+\renewcommand{\cftsecfont}{\normalfont} % Pas de couleur pour les sections
+\renewcommand{\cftsecpagefont}{\normalfont} % Pas de couleur pour les numéros de page des sections
+
+\renewcommand{\contentsname}{Table des matières}
+
+\definecolor{titlepagecolor}{cmyk}{1,.60,0,.40}
+
+\DeclareFixedFont{\bigsf}{T1}{phv}{b}{n}{1.5cm}
+
+\backgroundsetup{
+	scale=1,
+	angle=0,
+	opacity=1,
+	contents={\begin{tikzpicture}[remember picture,overlay]
+			\path [fill=titlepagecolor] (-0.5\paperwidth,5) rectangle (0.5\paperwidth,25);  
+	\end{tikzpicture}}
+}
+\makeatletter                       
+\def\printauthor{%                  
+	{\large \@author}}              
+\makeatother
+\author{
+	Mathis Lefebvre \\
+	\texttt{lefebvremathis@proton.me}\\ \vspace{60pt} 
+	\today
+}
+
+
+\begin{document}
+	
+	% Title Page
+	\begin{titlepage}
+		\BgThispage
+		\newgeometry{left=1cm,right=4cm}
+		\vspace*{2cm}
+		\noindent
+		\textcolor{white}{\huge Lorem Ipsum}
+		\vspace*{2.5cm}\par
+		\noindent
+		\begin{minipage}{0.35\linewidth}
+			\begin{flushright}
+				\printauthor
+			\end{flushright}
+		\end{minipage} \hspace{15pt}
+		%
+		\begin{minipage}{0.02\linewidth}
+			\rule{1pt}{175pt}
+		\end{minipage} \hspace{-10pt}
+		%
+		\begin{minipage}{0.6\linewidth}
+			\vspace{5pt}
+			\begin{resume}
+			Lorem Ipsum Larem Ipsam Lorem Ipsum Larem IpsamLorem Ipsum Larem Ipsam
+			\end{resume}
+		\end{minipage}
+	\end{titlepage}
+	
+	
+	% Table of Contents
+	\tableofcontents
+	\newpage
+	
+	
+	%Début du document	
+
+	
+\end{document}
