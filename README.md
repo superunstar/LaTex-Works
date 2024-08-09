@@ -1,5 +1,5 @@
 ## 🇬🇧 Language
-You can read this in [English](English-readme.md) 
+You can read this in [English](README-english.md) 
 
 # 📚 LaTeX Articles Collection
 
