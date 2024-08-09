@@ -7,7 +7,7 @@ Ce repository regroupe mes projets écrit en LaTex.
 
 ## 🚀 Objectif
 
-L'objectif est de partager mes travaux et de les rendre ouvert à la modification et à la correction, mes résultats pouvant être inexactes ou faux.
+L'objectif est de partager mes travaux et de les rendre ouvert à la modification, à la traduction et à la correction, mes résultats pouvant être inexactes ou faux.
 
 ## 🛠️ Pré-requis
 
