@@ -289,7 +289,7 @@ Ainsi est née la cryptographie.
 Mais l'exemple le plus connu, et qui sera ici le premier objet d'étude, c'est le chiffre de César \footnote{\href{https://sourcebooks.fordham.edu/ancient/suetonius-julius.asp}{Nom donné en rapport au fait que Jules César utilisait ce type de chiffrement pour ses communications secrètes : Halsall, P. (2019). \textit{Internet History Sourcebooks}. Fordham.edu.} (En Anglais.)}
 , qui porte officiellement le nom de chiffrement par décalage. Le concept, s'il n'a pas déjà été saisi, est simple : décaler les lettres d'un message en fonction de leurs positions dans l'alphabet et sur la base d'une fonction mathématique. Ainsi pour un message \textit{``Bonjour''} et pour une fonction \(+3\) on obtient \textit{``Erqmrxu''}.\\ 
 
-Si le concept théorique reste simple à comprendre, il est intéressant de mettre en place une description précise du procédé mathématique de cette méthode de chiffrement, ce qui permettra au lecteur de s'habituer à la lecture de formule mathématiques, présentes tout au long de cet article :
+Si le concept théorique reste simple à comprendre, il est intéressant de mettre en place une description précise du procédé mathématique de cette méthode de chiffrement, ce qui permettra au lecteur de s'habituer à la lecture de formule mathématiques, présentes tout au long de l'article :
 
 \paragraph{Def 3.3.1 :}\label{def-3.3.1}
 
@@ -319,20 +319,11 @@ la présente opération :
 	\textit{(\hyperref[def-1.2.1]{Def 1.2.1})} d'une lettre et où \(n\) représente
 	la valeur de décalage. En additionnant ces deux valeurs ensembles, on
 	obtient un nombre \(Z\) qui a pour objectif de servir de substitut de chiffrement
-	à la lettre en clair initiale \textit{(exemple : si \(x = 2\) (donc la
+	à la lettre en clair initiale \textit{(Exemple : si \(x = 2\) (donc la
 		lettre \(D\)) et \(n=3\) le résultat de l'addition des deux valeurs
 		\(x\) et \(n\) est de \(5\) (donc la lettre \(G\))}.
 	\item
-	\(\bmod \;26\) est présent pour s'assurer que le résultat du décalage
-	d'une lettre ne sorte pas des limites de l'alphabet \textit{(exemple :
-		si \(x=25\) (donc la lettre \(Z\)) et \(n=3\), le résultat de \(x+n\)
-		est de \(28\text{,}\) or \(28\) n'est égal à aucune lettre de
-		l'alphabet).} L'opérateur modulo \textit{(\hyperref[def-1.1.4]{cf. Def
-			1.1.3})} est alors utilisé pour garantir que
-	\(x+n < 26\). Si tel n'est pas le cas, alors l'opération
-	\(\bmod \; 26\) permet de repositionner la valeur de décalage au début de l'alphabet. 
-	Cela est dû au fait que dans l'opération
-	\(Z \bmod 26\) (où \(Z=x+n\)) le résultat vaut toujours \(Z\) tant que \(Z < 26\). Si \(Z\geq26\) l'opération modulo ajuste \(Z\) pour rester dans les limites de l'alphabet. \\
+	\(\bmod \;26\) est présent pour s'assurer que le résultat du décalage d'une lettre ne sorte pas des limites de l'alphabet \textit{(exemple : si \(x=25\) (donc la lettre \(Z\)) et \(n=3\), le résultat de \(x+n\) est de \(28\text{,}\) or \(28\) n'est égal à aucune lettre de l'alphabet).} L'opérateur modulo \textit{(\hyperref[def-1.1.4]{cf. Def 1.1.4})} est alors utilisé pour garantir que \(x+n < 26\). Si tel n'est pas le cas, alors l'opération \(\bmod \; 26\) permet de repositionner la valeur de décalage au début de l'alphabet.  Cela est dû au fait que dans une opération \(a \bmod b = c\),  $c$ vaut toujours \(a\) tant que \(a < b\). Si \(a \geq b\)  il faut alors continuer de soustraire $b$ de $a$ jusqu'à obtenir un résultat $c$ tel que $0 \leq c < b$. \\
 	
 	Ainsi, dans l'exemple donné, où
 	\(x=25\) et \(n=3\), le résultat de \(x+n \mod 26\) sera \(2\)
@@ -357,7 +348,7 @@ deux sens. \\
 
 \newpage
 
-Sans surprise, un telle méthode de chiffrement connaît des failles, la première, c'est l'attaque par force brute, en effet, le nombre de clés ne se limite qu'à $26$ ce qui, même pour un être humain, ne prend que peu de temps à tester toutes les clés $n$ possible une par une, jusqu'à obtention d'un résultat ressemblant à un message. Une autre méthode de cryptanalyse, appelée attaque par analyse fréquentielle, consiste à prendre en compte la lettre la plus courante de la langue dans laquelle le message a été écrit (en français, il s'agit de la lettre E) et de voir quelle lettre revient le plus dans le message chiffré. Par exemple, dans le message \textit{"SL JOPMMYLTLUA LZA CYHPTLUA BUL KPZJPWSPUL PUALYLZZHUAL !"} La lettre avec le plus d'itération est la lettre L, or, on sait que le message d'origine est écrit en français, on peut donc supposer que L représente E. La différence de position entre les deux lettres est de sept, ainsi, si l'on décale le message de sept lettres en arrière, on obtient \textit{"LE CHIFFREMENT EST VRAIMENT UNE DISCIPLINE INTÉRESSANTE !"}. \\
+Sans surprise, un telle méthode de chiffrement connaît des failles, la première, c'est l'attaque par force brute, en effet, le nombre de clés ne se limite qu'à $26$ ce qui, même pour un être humain, ne prend que peu de temps pour tester toutes les clés $n$ possible une par une, jusqu'à obtention d'un résultat ressemblant à un message. Une autre méthode de cryptanalyse, appelée attaque par analyse fréquentielle, consiste à prendre en compte la lettre la plus courante de la langue dans laquelle le message a été écrit (en français, il s'agit de la lettre E) et de voir quelle lettre revient le plus dans le message chiffré. Par exemple, dans le message \textit{"SL JOPMMYLTLUA LZA CYHPTLUA BUL KPZJPWSPUL PUALYLZZHUAL !"} La lettre avec le plus d'itération est la lettre L, or, on sait que le message d'origine est écrit en français, on peut donc supposer que L représente E. La différence de position entre les deux lettres est de sept emplacements en arrière, ainsi, si l'on décale le message de sept lettres en arrière, on obtient \textit{"LE CHIFFREMENT EST VRAIMENT UNE DISCIPLINE INTÉRESSANTE !"}. \\
 
 Si tant est qu'à l'époque de l'Empire Romain, cela ne posait pas vraiment de problèmes dû à un taux d'alphabétisation relativement bas, il se trouve, qu'avec le temps, les méthodes de cryptanalyse se sont considérablement améliorées, et ont fini par imposer la nécessité de créer des algorithmes de chiffrement symétrique bien plus robustes. \\
 
@@ -406,7 +397,7 @@ dans le fait que pour un bit chiffré égal à \(1\), la probabilité que le
 bit en clair soit \(0\) ou \(1\) est équivalente (voir table de vérité
 en \textit{\hyperref[def-1.1.10]{Def 1.1.10}}). Illustrons cela avec un
 exemple pour clarifier les choses : soit un message en clair représenté
-par la séquence de bits \(0110100\) et une clé \(1100101\), il est
+par la séquence de bits \(011\) et une clé \(110\), il est
 possible de chiffrer chaque bit du message en le calculant avec le bit
 de la clé situé à la même position. Par exemple, on peut calculer le
 premier bit du message et le premier bit de la clé avec l'opération
@@ -417,12 +408,12 @@ premier bit du message et le premier bit de la clé avec l'opération
 \] 
 
 Puis récidiver la transformation pour chaque bit jusqu'à obtention du
-message chiffré \(1010001\). Ainsi, un adversaire n'ayant accès qu'à ce
+message chiffré \(101\). Ainsi, un adversaire n'ayant accès qu'à ce
 message chiffré ne pourrait en déduire le message en clair, car chaque
 bit a une probabilité équivalente d'être \(1\) ou \(0\). En d'autres
 termes, en l'absence de la clé de chiffrement, ce message chiffré
 pourrait très bien correspondre à un message en clair initial
-\(1111111\) ou également \(0000000\). Plus concrètement, il existe un
+\(111\) ou également \(000\). Plus concrètement, il existe un
 nombre de figures exponentiellement grand qui est uniquement limité par
 la longueur du message. En termes mathématiques, pour un message de
 longueur \(n\), il y a \(2^n\) configurations possibles.
