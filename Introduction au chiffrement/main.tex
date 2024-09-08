@@ -148,7 +148,7 @@ Un nombre premier(\(\mathbb{P}\)) est un nombre qui est uniquement divisible par
 
 \paragraph{Def 1.1.3 :}\label{def-1.1.3}
 
-La \(\text{division euclidienne}\) est une variante de la
+La \(\text{division euclidienne}\)(/) est une variante de la
 \(\text{divison}(\div)\) et qui a pour particularité de ne travailler
 qu'avec des \(\text{entiers naturels}(\mathbb{N})\), ce qui donne un
 résultat en deux parties, le \(\text{quotient}(q)\) et le
@@ -163,7 +163,7 @@ qui renvoie le \(\text{reste}(r)\) comme résultat. \textit{(Exemple : $43 \bmod
 \paragraph{Def 1.1.5 :}\label{def-1.1.5}
 
 L'opérateur de \(\text{congruence}(\equiv)\) est un opérateur de
-vérification, comme l'opérateur d'\(\text{égalité}(=)\). Il vérifie
+vérification, comme l'opérateur d'égalité(=). Il vérifie
 qu'une valeur \(a\) donne bien un résultat \(c\) lors d'une opération
 \(a \bmod b\). Dans le cas où la vérification est fausse, alors \(a\)
 n'est pas congruent(\(\not\equiv\)) à \(c \bmod b\). \textit{(Exemple : $43$ est congruent à $7$ modulo $12$, on l'écrit ainsi $43 \equiv 7 (\bmod 12)$)}
@@ -232,22 +232,24 @@ valeur en clair en utilisant un algorithme de chiffrement.
 
 \section{Mise en Contexte.}\label{contexte.}
 
-\hspace{2em} La cryptographie est un domaine indéniablement lié au militaire, surtout en France, qui est longtemps restée l'un des pays les plus restrictifs sur le sujet. Ce n'est qu'après la loi sur la réglementation des télécommunications (1996)
+\hspace{2em} La cryptographie est un domaine indéniablement lié au militaire, surtout en France, qui est longtemps resté l'un des pays les plus restrictifs sur le sujet. Ce n'est qu'après la loi sur la réglementation des télécommunications (1996)
 \footnote{\href{https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000733177}{\textit{Loi n° 96-659 du 26 juillet 1996 de réglementation des télécommunications - Légifrance.} (1996, 26 Juillet). Legifrance.gouv.fr.}}
-que la France commencera à adopter une vision différente des méthodes de chiffrement, qui était jusque ici classé comme arme de guerre de deuxième catégorie. Tout cela n'a pas aidé le grand public à démystifier la cryptographie qui, encore aujourd'hui, peut parfois être considéré comme une technologie réservée aux films d'espionnage ou au militaire. Pourtant, à l'ère d'un monde numérique toujours plus connecté, la cryptographie est présente de manière quasi permanente, bien qu'à des échelles différentes. C'est notamment cette technologie qui sécurise nos transactions bancaires
+que la France commencera à adopter une vision différente des méthodes de chiffrement, qui étaient jusque ici classées comme arme de guerre de deuxième catégorie. Tout cela n'a pas aidé le grand public à démystifier la cryptographie qui, encore aujourd'hui, peut parfois être considéré comme une technologie réservée aux films d'espionnage ou au militaire. Pourtant, à l'ère d'un monde numérique toujours plus connecté, la cryptographie est présente de manière quasi permanente, bien qu'à des échelles différentes. C'est notamment cette technologie qui sécurise nos transactions bancaires
 \footnote{\href{https://interstices.info/le-protocole-cryptographique-de-paiement-par-carte-bancaire/}{Thomas Genet. (2008, 21 Février). \textit{Le protocole cryptographique de paiement par carte bancaire.} Interstices.}},
 notre navigation sur internet
 \footnote{\href{https://www.cloudflare.com/fr-fr/learning/ssl/transport-layer-security-tls/}{\textit{Qu’est-ce que le TLS (Transport Layer Security) ?} (n.d.). Cloudflare.}}
 ou encore nos conversations, des plus professionnelles aux plus intimes, via des messageries sécurisées comme WhatsApp
 \footnote{\href{https://faq.whatsapp.com/820124435853543}{\textit{À propos du chiffrement de bout en bout.} (n.d.). WhatsApp.}}
 ou Signal.
-Bien que l'existence de la cryptographie se soit démocratisé aux yeux du grand public, la compréhension, même élémentaire de celle-ci et de son  impact sur le monde reste méconnue. Or, dans une société qui continue encore et encore de se numériser et qui devient de plus en plus dépendante des technologies de chiffrement sans pour autant les connaître, c'est une société qui se risque à débattre de la nécessité et de la place d'une technologie qu'elle ne comprend pas, et qui est ô combien importante. \\
+Bien que l'existence de la cryptographie se soit démocratisé aux yeux du grand public, la compréhension, même élémentaire de celle-ci et de son  impact sur le monde reste méconnue. Or, dans une société qui continue encore et encore de se numériser et qui devient de plus en plus dépendante des technologies de chiffrement sans pour autant les connaître, c'est une société qui se risque à débattre de la nécessité et de la place d'une technologie qu'elle ne comprend pas, et qui impacte pourtant significativement la société en question.  \\
 
 J'ai pour ma part découvert cette discipline lors de la mise en place de mon serveur informatique personnel, lors de la configuration de SSH, un outil de communication sécurisé entre machines, qui repose sur la cryptographie asymétrique pour garantir la sécurité des communications et qui permet, dans mon cas, de communiquer avec mon serveur partout dans le monde et de manière sécurisée. \\
 
-La naissance de cet article vient de mon questionnement sur le fonctionnement des méthodes de cryptographie asymétrique, qui ont la particularité de posséder une paire de clés \textit{(dont le fonctionnement précis est détaillé dans la suite de cet article)}, dont une clé publique, qui peut être connue de tous et qui m'ont fait me demander : \textbf{jusqu'à quel point ces méthodes sont-elles infaillibles ?} \\
+La naissance de cet article vient de mon questionnement sur le fonctionnement des méthodes de cryptographie asymétrique, qui ont la particularité de posséder une paire de clés \textit{(dont le fonctionnement précis est détaillé dans la suite de cet article)}, dont une clé publique, qui peut, à ma grande surprise, être connue de tous et qui m'ont fait me demander : \textbf{jusqu'à quel point ces méthodes sont-elles infaillibles ?} \\
 
-Ma volonté la plus humble est donc de réussir à fournir tant des informations précises et exactes que de partager mon émerveillement pour la beauté et la complexité mathématique qui composent ces technologies. C'est cette curiosité qui m'a conduit à une meilleure compréhension des enjeux que représentent les technologies pour notre monde, et que j'espère réussir à transmettre.  \\
+Ma volonté la plus humble est donc de réussir à fournir tant des informations précises et exactes que de partager mon émerveillement pour la beauté et la complexité mathématique qui composent ces technologies. C'est cette curiosité qui m'a conduit à une meilleure compréhension des enjeux que représentent les technologies pour notre monde, et que j'espère réussir à transmettre. \\
+
+Je tiens tout de même à rappeler que je ne suis ni un professionnel du domaine que j'avance ici, ni un scientifique reconnu, je ne suis qu'un simple curieux avec une volonté grandissante de transmettre mes connaissances. Cet article ne doit donc pas servir de base unique à un travail de recherche ou à une quelconque volonté professionnelle.  \\
 
 Pour cela, nous verrons donc une courte révision historique de la cryptographie afin de comprendre d'où vient cette idée étrange, bien qu'importante. Nous verrons ensuite une première méthode de chiffrement, le chiffrement symétrique, en s'appuyant sur deux objets d'études, le Chiffre de César et le One-Time-Pad (OTP). Nous étudierons notamment les faiblesses de ces méthodes qui ont conduit à la création d'une nouvelle : le chiffrement asymétrique, que nous illustrerons avec le protocole Rivet-Shamir-Adleman (RSA) et que nous mettrons à l'épreuve afin de vérifier sa robustesse. 
 
@@ -259,7 +261,7 @@ Pour cela, nous verrons donc une courte révision historique de la cryptographie
 Les toutes premières traces de chiffrement remontent à 1900 av. J.-C.,
 en Égypte antique lorsqu'un scribe esquisse les hiéroglyphes racontant
 la vie de son seigneur. En effet, le système d'écriture des hiéroglyphes
-qu'il utilise est assez inhabituel et est volontairement complexe. Il ne faut pas s'y méprendre : il s'agit en fait d'une volonté de rendre hommage de manière
+qu'il utilise est assez inhabituel et est volontairement complexe.Mais il ne faut pas s'y méprendre : il s'agit en fait d'une volonté de rendre hommage de manière
 harmonieuse à son seigneur afin de lui conférer dignité et autorité
 plutôt qu'une intention explicite de chiffrement. Quand bien même, il est ainsi possible
 de retrouver des phrases telles que "Dans l'année de notre seigneur
@@ -289,7 +291,7 @@ Ainsi est née la cryptographie.
 Mais l'exemple le plus connu, et qui sera ici le premier objet d'étude, c'est le chiffre de César \footnote{\href{https://sourcebooks.fordham.edu/ancient/suetonius-julius.asp}{Nom donné en rapport au fait que Jules César utilisait ce type de chiffrement pour ses communications secrètes : Halsall, P. (2019). \textit{Internet History Sourcebooks}. Fordham.edu.} (En Anglais.)}
 , qui porte officiellement le nom de chiffrement par décalage. Le concept, s'il n'a pas déjà été saisi, est simple : décaler les lettres d'un message en fonction de leurs positions dans l'alphabet et sur la base d'une fonction mathématique. Ainsi pour un message \textit{``Bonjour''} et pour une fonction \(+3\) on obtient \textit{``Erqmrxu''}.\\ 
 
-Si le concept théorique reste simple à comprendre, il est intéressant de mettre en place une description précise du procédé mathématique de cette méthode de chiffrement, ce qui permettra au lecteur de s'habituer à la lecture de formule mathématiques, présentes tout au long de l'article :
+Si le concept théorique reste simple à comprendre, il est intéressant de mettre en place une description précise du procédé mathématique de cette méthode de chiffrement, ce qui permettra au lecteur de s'habituer à la lecture de formules mathématiques, présentes tout au long de l'article :
 
 \paragraph{Def 3.3.1 :}\label{def-3.3.1}
 
